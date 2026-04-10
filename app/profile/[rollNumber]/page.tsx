@@ -178,7 +178,7 @@ export default function ProfilePage() {
             <textarea
               value={feedbackText}
               onChange={(e) => setFeedbackText(e.target.value)}
-              placeholder="Write something you always wanted to say..."
+              placeholder="Whisper something anonymously..."
               className="w-full resize-none rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
               rows={3}
             />
@@ -187,7 +187,7 @@ export default function ProfilePage() {
               disabled={submittingFeedback || !feedbackText.trim()}
               className="inline-flex items-center rounded-full bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:bg-gray-400"
             >
-              {submittingFeedback ? 'Posting...' : 'Leave a Note'}
+              {submittingFeedback ? 'Whispering...' : 'Whisper'}
             </button>
           </form>
         </div>
