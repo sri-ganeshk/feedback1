@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Yap Box",
-  description: "Yap Box - Anonymous feedback app",
+  description: "Yap Box - Whisper anonymously",
 };
 
 export default function RootLayout({
