@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
       parentCommentId: parentCommentId || null,
       text: text.trim(),
       rk_key,
-    });
+  });
 
     // Increment replyCount on the parent RollNumber
     const feedback = await Feedback.findById(feedbackId).lean();
