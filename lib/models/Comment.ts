@@ -26,5 +26,7 @@ const CommentSchema = new mongoose.Schema(
   }
 );
 
+CommentSchema.index({ feedbackId: 1, createdAt: 1 });
+
 export const Comment =
   mongoose.models.Comment || mongoose.model('Comment', CommentSchema);

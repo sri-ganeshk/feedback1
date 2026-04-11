@@ -17,6 +17,8 @@ interface CommentThreadProps {
   onReplyClick: (commentId: string, feedbackId: string) => void;
 }
 
+const ROOT_KEY = '__root__';
+
 function formatCommentTime(createdAt: string) {
   return new Intl.DateTimeFormat('en-US', {
     month: 'short',
@@ -37,7 +39,7 @@ export default function CommentThread({
     const map: Record<string, Comment[]> = {};
 
     for (const comment of comments) {
-      const parentId = comment.parentCommentId ?? '__root__';
+      const parentId = comment.parentCommentId ?? ROOT_KEY;
       if (!map[parentId]) {
         map[parentId] = [];
       }
@@ -50,13 +52,13 @@ export default function CommentThread({
   const getChildren = (commentId: string) => directChildrenMap[commentId] ?? [];
 
   const buildThreadTree = (
-    comments: Comment[],
     parentId: string | null = null,
     depth: number = 0
   ): ReactElement[] => {
-    const threadItems = comments
-      .filter((comment) => comment.parentCommentId === parentId)
-      .map((comment) => (
+    const key = parentId ?? ROOT_KEY;
+    const children = directChildrenMap[key] ?? [];
+
+    return children.map((comment) => (
         <div key={comment._id} className={depth > 0 ? 'ml-6 pl-4 border-l border-slate-200' : ''}>
           <div className="flex gap-3 rounded-2xl border border-slate-200 bg-slate-50/90 px-4 py-3 shadow-sm">
             <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-900 text-xs font-semibold text-white">
@@ -95,16 +97,14 @@ export default function CommentThread({
               </div>
             </div>
           </div>
-          {!collapsedComments[comment._id] && buildThreadTree(comments, comment._id, depth + 1)}
+          {!collapsedComments[comment._id] && buildThreadTree(comment._id, depth + 1)}
         </div>
       ));
-
-    return threadItems;
   };
 
   if (comments.length === 0) {
     return null;
   }
 
-  return <div className="mt-4 space-y-3">{buildThreadTree(comments)}</div>;
+  return <div className="mt-4 space-y-3">{buildThreadTree()}</div>;
 }

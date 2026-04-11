@@ -20,5 +20,7 @@ const FeedbackSchema = new mongoose.Schema(
   }
 );
 
+FeedbackSchema.index({ rollNumber: 1, createdAt: -1 });
+
 export const Feedback =
   mongoose.models.Feedback || mongoose.model('Feedback', FeedbackSchema);

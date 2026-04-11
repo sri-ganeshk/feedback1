@@ -57,27 +57,8 @@ export default function Home() {
   }, [searchQuery]);
 
   useEffect(() => {
-    setLoading(true);
-    const initialFetch = async () => {
-      try {
-        const params = new URLSearchParams();
-        params.set('limit', '20');
-
-        const response = await fetch(`/api/rollnumbers?${params.toString()}`);
-        const result = await response.json();
-
-        setAllRollNumbers(result.data);
-        setCursor(result.nextCursor);
-        setHasMore(result.hasMore);
-      } catch (error) {
-        console.error('Error fetching roll numbers:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    initialFetch();
-  }, []);
+    fetchRollNumbers(null);
+  }, [fetchRollNumbers]);
 
   useEffect(() => {
     if (!observerTarget.current || !hasMore) return;
