@@ -52,17 +52,18 @@ export default function ProfilePage() {
   const fetchFeedback = useCallback(async () => {
     try {
       const response = await fetch(`/api/feedback/${encodeURIComponent(rollNumber)}`);
-      const data = await response.json();
+      const data: Feedback[] = await response.json();
       setFeedbacks(data);
 
-      // Fetch comments for each feedback
-      const commentsMap: { [key: string]: Comment[] } = {};
-      for (const feedback of data) {
-        const commentsResponse = await fetch(`/api/comments/${feedback._id}`);
-        const commentsData = await commentsResponse.json();
-        commentsMap[feedback._id] = commentsData;
+      // Fetch all comments in a single batch request
+      if (data.length > 0) {
+        const feedbackIds = data.map((f) => f._id).join(',');
+        const commentsResponse = await fetch(`/api/comments/bulk?feedbackIds=${feedbackIds}`);
+        const commentsMap: { [key: string]: Comment[] } = await commentsResponse.json();
+        setComments(commentsMap);
+      } else {
+        setComments({});
       }
-      setComments(commentsMap);
 
       setVisibleThreads((current) => {
         const next = { ...current };
@@ -106,10 +107,13 @@ export default function ProfilePage() {
       });
 
       if (response.ok) {
-        await response.json();
+        const result = await response.json();
+        const newFeedback: Feedback = result.feedback;
         setFeedbackText('');
-        // Refetch all data
-        await fetchFeedback();
+        // Optimistically prepend the new feedback without a full refetch
+        setFeedbacks((prev) => [newFeedback, ...prev]);
+        setComments((prev) => ({ [newFeedback._id]: [], ...prev }));
+        setVisibleThreads((prev) => ({ ...prev, [newFeedback._id]: false }));
       }
     } catch (error) {
       console.error('Error adding feedback:', error);
